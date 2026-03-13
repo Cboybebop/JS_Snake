@@ -258,6 +258,24 @@ class HighscoreService {
   }
 }
 
+function mountSupabasePanel() {
+  const panelMount = document.getElementById("supabasePanelMount");
+  const panelTemplate = document.getElementById("supabasePanelTemplate");
+
+  if (!panelMount || !panelTemplate) {
+    return;
+  }
+
+  if (readRuntimeSupabaseConfig().managed) {
+    panelMount.replaceChildren();
+    return;
+  }
+
+  panelMount.replaceChildren(panelTemplate.content.cloneNode(true));
+}
+
+mountSupabasePanel();
+
 const ui = {
   canvas: document.getElementById("gameCanvas"),
   status: document.getElementById("gameStatus"),
@@ -369,28 +387,30 @@ function bindEvents() {
     });
   });
 
-  ui.saveSupabaseBtn.addEventListener("click", async () => {
-    if (highscores.config.managed) {
-      showToast("Supabase settings are managed by Netlify for this deployment.");
-      return;
-    }
+  if (ui.saveSupabaseBtn) {
+    ui.saveSupabaseBtn.addEventListener("click", async () => {
+      if (highscores.config.managed) {
+        showToast("Supabase settings are managed by Netlify for this deployment.");
+        return;
+      }
 
-    const config = {
-      supabaseUrl: ui.supabaseUrl.value.trim(),
-      supabaseAnonKey: ui.supabaseKey.value.trim(),
-      highscoresTable: ui.supabaseTable.value.trim() || "snake_highscores"
-    };
+      const config = {
+        supabaseUrl: ui.supabaseUrl.value.trim(),
+        supabaseAnonKey: ui.supabaseKey.value.trim(),
+        highscoresTable: ui.supabaseTable.value.trim() || "snake_highscores"
+      };
 
-    highscores.saveRemoteConfig(config);
-    updateSupabaseStatus();
-    await refreshScoreboards();
+      highscores.saveRemoteConfig(config);
+      updateSupabaseStatus();
+      await refreshScoreboards();
 
-    if (highscores.client) {
-      showToast("Supabase settings saved.");
-    } else {
-      showToast("Remote highscores disabled. Missing URL or anon key.");
-    }
-  });
+      if (highscores.client) {
+        showToast("Supabase settings saved.");
+      } else {
+        showToast("Remote highscores disabled. Missing URL or anon key.");
+      }
+    });
+  }
 
   window.addEventListener("resize", () => {
     resizeCanvas();
@@ -454,28 +474,31 @@ function persistPlayerName(name) {
 }
 
 function hydrateSupabaseInputs() {
+  if (!ui.supabaseUrl || !ui.supabaseKey || !ui.supabaseTable) {
+    return;
+  }
+
   ui.supabaseUrl.value = highscores.config.supabaseUrl || "";
   ui.supabaseKey.value = highscores.config.supabaseAnonKey || "";
   ui.supabaseTable.value = highscores.config.highscoresTable || "snake_highscores";
 }
 
 function syncSupabasePanelState() {
-  const managed = highscores.config.managed;
+  if (!ui.supabasePanel || !ui.supabaseFieldset || !ui.supabaseHint) {
+    return;
+  }
 
-  ui.supabasePanel.classList.toggle("is-managed", managed);
-  ui.supabaseFieldset.disabled = managed;
-  ui.supabaseFieldset.setAttribute("aria-disabled", managed ? "true" : "false");
-  ui.supabaseHint.textContent = managed
-    ? "Configured from Netlify environment variables for this deployment."
-    : "Optional. Enables shared online highscores.";
+  ui.supabaseFieldset.disabled = false;
+  ui.supabaseFieldset.setAttribute("aria-disabled", "false");
+  ui.supabaseHint.textContent = "Optional. Enables shared online highscores.";
 }
 
 function updateSupabaseStatus() {
-  if (highscores.config.managed && highscores.client) {
-    ui.supabaseStatus.textContent = `Remote highscores managed by Netlify (table: ${highscores.config.highscoresTable}).`;
-  } else if (highscores.config.managed) {
-    ui.supabaseStatus.textContent = "Managed Supabase config detected, but the client could not initialize.";
-  } else if (highscores.client) {
+  if (!ui.supabaseStatus) {
+    return;
+  }
+
+  if (highscores.client) {
     ui.supabaseStatus.textContent = `Remote highscores enabled (table: ${highscores.config.highscoresTable}).`;
   } else {
     ui.supabaseStatus.textContent = "No remote config saved.";
