@@ -1,5 +1,6 @@
 window.SNAKE_CONFIG = window.SNAKE_CONFIG || {
-  supabaseUrl: "",
-  supabaseAnonKey: "",
-  highscoresTable: "snake_highscores"
+  "supabaseManaged": false,
+  "supabaseUrl": "",
+  "supabaseAnonKey": "",
+  "highscoresTable": "snake_highscores"
 };
