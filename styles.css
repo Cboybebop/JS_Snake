@@ -147,6 +147,13 @@ input {
   padding: 9px 10px;
 }
 
+select:disabled,
+input:disabled,
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.66;
+}
+
 input::placeholder {
   color: #7da2ba;
 }
@@ -172,6 +179,12 @@ input::placeholder {
 .btn:focus-visible {
   border-color: rgba(192, 229, 255, 0.68);
   transform: translateY(-1px);
+}
+
+.btn:disabled:hover,
+.btn:disabled:focus-visible {
+  transform: none;
+  border-color: rgba(156, 208, 255, 0.35);
 }
 
 .btn-primary {
@@ -259,6 +272,27 @@ input::placeholder {
   color: var(--text-dim);
   font-size: 12px;
   line-height: 1.4;
+}
+
+.supabase-panel {
+  margin-top: 14px;
+  padding-top: 2px;
+  border-top: 1px solid rgba(156, 208, 255, 0.14);
+}
+
+.supabase-panel.is-managed {
+  border-top-color: rgba(111, 252, 154, 0.26);
+}
+
+.supabase-fieldset {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  min-width: 0;
+}
+
+.supabase-fieldset:disabled {
+  opacity: 0.7;
 }
 
 .status-pill {

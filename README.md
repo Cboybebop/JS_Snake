@@ -16,7 +16,8 @@ A modern, responsive Snake game built with vanilla HTML/CSS/JS, featuring:
 
 - `index.html` - app shell + UI
 - `styles.css` - responsive modern styling
-- `config.js` - runtime config defaults for Supabase
+- `config.js` - generated runtime config for public Supabase settings
+- `scripts/generate-config.js` - Netlify/local build helper that writes `config.js`
 - `src/app.js` - game engine + UI + highscore services
 - `netlify.toml` - Netlify configuration
 
@@ -80,8 +81,8 @@ Saved automatically in browser `localStorage` by mode (`classic` / `versus`).
 
 1. Create a Supabase project.
 2. Create a table (default expected name: `snake_highscores`).
-3. Paste your project URL and anon key into the in-game Supabase panel.
-4. Save settings.
+3. Either paste your project URL and anon key into the in-game Supabase panel, or set them as Netlify environment variables for the deployment.
+4. Save settings if you are using the in-app panel.
 
 Suggested SQL:
 
@@ -117,7 +118,15 @@ Deploy options:
 1. Connect repo to Netlify and deploy directly.
 2. Or drag-and-drop this folder in Netlify Deploys.
 
-No build command is required.
+The included Netlify build command writes `config.js` from environment variables before publish. That managed setup applies when Netlify is building the repo; drag-and-drop deploys use whatever `config.js` is already in the folder.
+
+Recommended Netlify environment variables:
+
+- `SUPABASE_URL`
+- `SUPABASE_ANON_KEY`
+- `SUPABASE_HIGHSCORES_TABLE` (optional, defaults to `snake_highscores`)
+
+When `SUPABASE_URL` and `SUPABASE_ANON_KEY` are both present, the app treats Supabase as deployment-managed and disables the in-app Supabase editor.
 
 ## Configuration
 
@@ -125,13 +134,14 @@ No build command is required.
 
 ```js
 window.SNAKE_CONFIG = {
+  supabaseManaged: false,
   supabaseUrl: "",
   supabaseAnonKey: "",
   highscoresTable: "snake_highscores"
 };
 ```
 
-The in-app Supabase form saves values to browser local storage.
+On Netlify, `scripts/generate-config.js` overwrites `config.js` during the build using public environment variables. The in-app Supabase form saves values to browser local storage only when deployment-managed config is not active.
 
 ## Notes
 

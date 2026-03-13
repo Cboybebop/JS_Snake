@@ -65,6 +65,23 @@ const POWER_UP_TYPES = [
   }
 ];
 
+function readRuntimeSupabaseConfig() {
+  const runtime = window.SNAKE_CONFIG || {};
+  const supabaseUrl = typeof runtime.supabaseUrl === "string" ? runtime.supabaseUrl.trim() : "";
+  const supabaseAnonKey = typeof runtime.supabaseAnonKey === "string" ? runtime.supabaseAnonKey.trim() : "";
+  const highscoresTable =
+    typeof runtime.highscoresTable === "string" && runtime.highscoresTable.trim()
+      ? runtime.highscoresTable.trim()
+      : "snake_highscores";
+
+  return {
+    managed: Boolean(runtime.supabaseManaged && supabaseUrl && supabaseAnonKey),
+    supabaseUrl,
+    supabaseAnonKey,
+    highscoresTable
+  };
+}
+
 class HighscoreService {
   constructor() {
     this.localStorageKey = "snake.local.highscores.v1";
@@ -75,7 +92,7 @@ class HighscoreService {
   }
 
   loadRemoteConfig() {
-    const runtime = window.SNAKE_CONFIG || {};
+    const runtime = readRuntimeSupabaseConfig();
     let stored = {};
 
     try {
@@ -85,7 +102,12 @@ class HighscoreService {
       stored = {};
     }
 
+    if (runtime.managed) {
+      return runtime;
+    }
+
     return {
+      managed: false,
       supabaseUrl: stored.supabaseUrl || runtime.supabaseUrl || "",
       supabaseAnonKey: stored.supabaseAnonKey || runtime.supabaseAnonKey || "",
       highscoresTable: stored.highscoresTable || runtime.highscoresTable || "snake_highscores"
@@ -93,9 +115,14 @@ class HighscoreService {
   }
 
   saveRemoteConfig(nextConfig) {
+    if (this.config.managed) {
+      return;
+    }
+
     this.config = {
       ...this.config,
       ...nextConfig,
+      managed: false,
       highscoresTable: nextConfig.highscoresTable || this.config.highscoresTable || "snake_highscores"
     };
 
@@ -248,6 +275,9 @@ const ui = {
   localScores: document.getElementById("localScores"),
   onlineScores: document.getElementById("onlineScores"),
   tabButtons: Array.from(document.querySelectorAll(".tab-btn")),
+  supabasePanel: document.getElementById("supabasePanel"),
+  supabaseFieldset: document.getElementById("supabaseFieldset"),
+  supabaseHint: document.getElementById("supabaseHint"),
   supabaseUrl: document.getElementById("supabaseUrl"),
   supabaseKey: document.getElementById("supabaseKey"),
   supabaseTable: document.getElementById("supabaseTable"),
@@ -302,6 +332,7 @@ function init() {
 
   restorePlayerName();
   hydrateSupabaseInputs();
+  syncSupabasePanelState();
   bindEvents();
   applyModeConstraints();
   updateSupabaseStatus();
@@ -339,6 +370,11 @@ function bindEvents() {
   });
 
   ui.saveSupabaseBtn.addEventListener("click", async () => {
+    if (highscores.config.managed) {
+      showToast("Supabase settings are managed by Netlify for this deployment.");
+      return;
+    }
+
     const config = {
       supabaseUrl: ui.supabaseUrl.value.trim(),
       supabaseAnonKey: ui.supabaseKey.value.trim(),
@@ -423,8 +459,23 @@ function hydrateSupabaseInputs() {
   ui.supabaseTable.value = highscores.config.highscoresTable || "snake_highscores";
 }
 
+function syncSupabasePanelState() {
+  const managed = highscores.config.managed;
+
+  ui.supabasePanel.classList.toggle("is-managed", managed);
+  ui.supabaseFieldset.disabled = managed;
+  ui.supabaseFieldset.setAttribute("aria-disabled", managed ? "true" : "false");
+  ui.supabaseHint.textContent = managed
+    ? "Configured from Netlify environment variables for this deployment."
+    : "Optional. Enables shared online highscores.";
+}
+
 function updateSupabaseStatus() {
-  if (highscores.client) {
+  if (highscores.config.managed && highscores.client) {
+    ui.supabaseStatus.textContent = `Remote highscores managed by Netlify (table: ${highscores.config.highscoresTable}).`;
+  } else if (highscores.config.managed) {
+    ui.supabaseStatus.textContent = "Managed Supabase config detected, but the client could not initialize.";
+  } else if (highscores.client) {
     ui.supabaseStatus.textContent = `Remote highscores enabled (table: ${highscores.config.highscoresTable}).`;
   } else {
     ui.supabaseStatus.textContent = "No remote config saved.";
@@ -1023,7 +1074,10 @@ async function refreshScoreboards() {
   renderScoreList(ui.localScores, localScores, "No local highscores yet.");
 
   if (!highscores.client) {
-    renderScoreList(ui.onlineScores, [], "Configure Supabase to load online scores.");
+    const emptyMessage = highscores.config.managed
+      ? "Supabase is managed by Netlify, but online highscores are unavailable."
+      : "Configure Supabase to load online scores.";
+    renderScoreList(ui.onlineScores, [], emptyMessage);
     return;
   }
 
