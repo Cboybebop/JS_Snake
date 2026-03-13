@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Neon Snake Arena</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Syne:wght@600;700;800&display=swap"
+    rel="stylesheet"
+  />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div>
+        <p class="eyebrow">Modern Multiplayer Snake</p>
+        <h1>Neon Snake Arena</h1>
+      </div>
+      <div class="status-pill" id="gameStatus">Idle</div>
+    </header>
+
+    <main class="layout">
+      <aside class="panel controls-panel">
+        <h2>Game Setup</h2>
+        <div class="field">
+          <label for="modeSelect">Mode</label>
+          <select id="modeSelect">
+            <option value="classic">Traditional</option>
+            <option value="versus">Versus</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="playerCountSelect">Players</label>
+          <select id="playerCountSelect">
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="cpuCountSelect">CPU Opponents</label>
+          <select id="cpuCountSelect">
+            <option value="0">0</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="boardSizeSelect">Board Size</label>
+          <select id="boardSizeSelect">
+            <option value="compact">Compact</option>
+            <option value="balanced" selected>Balanced</option>
+            <option value="arena">Arena</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="speedSelect">Speed</label>
+          <select id="speedSelect">
+            <option value="0.85">Slow</option>
+            <option value="1" selected>Normal</option>
+            <option value="1.15">Fast</option>
+            <option value="1.35">Extreme</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="playerNameInput">Display Name</label>
+          <input id="playerNameInput" type="text" maxlength="24" placeholder="Player One" />
+        </div>
+
+        <div class="button-row">
+          <button id="startBtn" class="btn btn-primary">Start Game</button>
+          <button id="pauseBtn" class="btn">Pause</button>
+          <button id="restartBtn" class="btn">Restart</button>
+        </div>
+
+        <h3>Controls</h3>
+        <ul class="key-list">
+          <li>P1: Arrow Keys / Gamepad 1</li>
+          <li>P2: WASD / Gamepad 2</li>
+          <li>P3: IJKL / Gamepad 3</li>
+          <li>P4: TFGH / Gamepad 4</li>
+          <li>Pause: Space or P</li>
+        </ul>
+
+        <h3>Player Board</h3>
+        <div id="playerStats" class="player-stats"></div>
+      </aside>
+
+      <section class="board-panel">
+        <div class="canvas-shell">
+          <canvas id="gameCanvas" width="960" height="540" aria-label="Snake game board"></canvas>
+          <div id="toast" class="toast" aria-live="polite"></div>
+        </div>
+
+        <div class="mobile-controls" id="mobileControls">
+          <button data-dir="up" aria-label="Up">?</button>
+          <button data-dir="left" aria-label="Left">?</button>
+          <button data-dir="down" aria-label="Down">?</button>
+          <button data-dir="right" aria-label="Right">?</button>
+        </div>
+      </section>
+
+      <aside class="panel scores-panel">
+        <h2>Highscores</h2>
+        <div class="score-toggle">
+          <button class="tab-btn active" data-tab="local">Local</button>
+          <button class="tab-btn" data-tab="online">Online</button>
+        </div>
+        <ol id="localScores" class="score-list"></ol>
+        <ol id="onlineScores" class="score-list hidden"></ol>
+
+        <h3>Supabase</h3>
+        <p class="hint">Optional. Enables shared online highscores.</p>
+        <div class="field">
+          <label for="supabaseUrl">Project URL</label>
+          <input id="supabaseUrl" type="url" placeholder="https://xyz.supabase.co" />
+        </div>
+        <div class="field">
+          <label for="supabaseKey">Anon Key</label>
+          <input id="supabaseKey" type="password" placeholder="sb_publishable_..." />
+        </div>
+        <div class="field">
+          <label for="supabaseTable">Table</label>
+          <input id="supabaseTable" type="text" value="snake_highscores" />
+        </div>
+        <button id="saveSupabaseBtn" class="btn btn-primary">Save Supabase Settings</button>
+        <p id="supabaseStatus" class="hint">No remote config saved.</p>
+      </aside>
+    </main>
+  </div>
+
+  <dialog id="gameOverDialog">
+    <h2 id="gameOverTitle">Game Over</h2>
+    <p id="gameOverText"></p>
+    <div class="field">
+      <label for="submitNameInput">Name for Highscore</label>
+      <input id="submitNameInput" type="text" maxlength="24" placeholder="Player One" />
+    </div>
+    <div class="button-row">
+      <button id="saveScoreBtn" class="btn btn-primary">Save Score</button>
+      <button id="closeDialogBtn" class="btn">Close</button>
+    </div>
+  </dialog>
+
+  <script src="config.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script type="module" src="src/app.js"></script>
+</body>
+</html>
+
