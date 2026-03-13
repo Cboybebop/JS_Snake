@@ -1,3 +1,4 @@
+![Neon Snake Arena](snake.png)
 # Neon Snake Arena
 
 A modern, responsive Snake game built with vanilla HTML/CSS/JS, featuring:
