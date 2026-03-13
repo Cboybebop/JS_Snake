@@ -1,5 +1,6 @@
 # Neon Snake Arena
 ![Neon Snake Arena](snake.png)
+
 A modern, responsive Snake game built with vanilla HTML/CSS/JS, featuring:
 
 - Traditional single-player mode
