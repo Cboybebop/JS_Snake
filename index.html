@@ -119,26 +119,29 @@
         <ol id="localScores" class="score-list"></ol>
         <ol id="onlineScores" class="score-list hidden"></ol>
 
-        <section id="supabasePanel" class="supabase-panel">
-          <h3>Supabase</h3>
-          <p id="supabaseHint" class="hint">Optional. Enables shared online highscores.</p>
-          <fieldset id="supabaseFieldset" class="supabase-fieldset">
-            <div class="field">
-              <label for="supabaseUrl">Project URL</label>
-              <input id="supabaseUrl" type="url" placeholder="https://xyz.supabase.co" />
-            </div>
-            <div class="field">
-              <label for="supabaseKey">Anon Key</label>
-              <input id="supabaseKey" type="password" placeholder="sb_publishable_..." />
-            </div>
-            <div class="field">
-              <label for="supabaseTable">Table</label>
-              <input id="supabaseTable" type="text" value="snake_highscores" />
-            </div>
-            <button id="saveSupabaseBtn" class="btn btn-primary">Save Supabase Settings</button>
-          </fieldset>
-          <p id="supabaseStatus" class="hint">No remote config saved.</p>
-        </section>
+        <div id="supabasePanelMount"></div>
+        <template id="supabasePanelTemplate">
+          <section id="supabasePanel" class="supabase-panel">
+            <h3>Supabase</h3>
+            <p id="supabaseHint" class="hint">Optional. Enables shared online highscores.</p>
+            <fieldset id="supabaseFieldset" class="supabase-fieldset">
+              <div class="field">
+                <label for="supabaseUrl">Project URL</label>
+                <input id="supabaseUrl" type="url" placeholder="https://xyz.supabase.co" />
+              </div>
+              <div class="field">
+                <label for="supabaseKey">Anon Key</label>
+                <input id="supabaseKey" type="password" placeholder="sb_publishable_..." />
+              </div>
+              <div class="field">
+                <label for="supabaseTable">Table</label>
+                <input id="supabaseTable" type="text" value="snake_highscores" />
+              </div>
+              <button id="saveSupabaseBtn" class="btn btn-primary">Save Supabase Settings</button>
+            </fieldset>
+            <p id="supabaseStatus" class="hint">No remote config saved.</p>
+          </section>
+        </template>
       </aside>
     </main>
   </div>

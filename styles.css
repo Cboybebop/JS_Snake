@@ -280,9 +280,6 @@ input::placeholder {
   border-top: 1px solid rgba(156, 208, 255, 0.14);
 }
 
-.supabase-panel.is-managed {
-  border-top-color: rgba(111, 252, 154, 0.26);
-}
 
 .supabase-fieldset {
   margin: 0;
@@ -291,9 +288,6 @@ input::placeholder {
   min-width: 0;
 }
 
-.supabase-fieldset:disabled {
-  opacity: 0.7;
-}
 
 .status-pill {
   border: 1px solid rgba(126, 245, 215, 0.4);

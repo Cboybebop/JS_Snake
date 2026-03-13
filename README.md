@@ -126,7 +126,7 @@ Recommended Netlify environment variables:
 - `SUPABASE_ANON_KEY`
 - `SUPABASE_HIGHSCORES_TABLE` (optional, defaults to `snake_highscores`)
 
-When `SUPABASE_URL` and `SUPABASE_ANON_KEY` are both present, the app treats Supabase as deployment-managed and disables the in-app Supabase editor.
+When `SUPABASE_URL` and `SUPABASE_ANON_KEY` are both present, the app treats Supabase as deployment-managed and does not render the in-app Supabase editor at all.
 
 ## Configuration
 
@@ -141,7 +141,7 @@ window.SNAKE_CONFIG = {
 };
 ```
 
-On Netlify, `scripts/generate-config.js` overwrites `config.js` during the build using public environment variables. The in-app Supabase form saves values to browser local storage only when deployment-managed config is not active.
+On Netlify, `scripts/generate-config.js` overwrites `config.js` during the build using public environment variables. The in-app Supabase form only exists when deployment-managed config is not active, and that editable mode still saves values to browser local storage.
 
 ## Notes
 
