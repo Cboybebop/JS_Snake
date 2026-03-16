@@ -263,6 +263,10 @@ input::placeholder {
   font-size: 14px;
 }
 
+.score-list-empty {
+  list-style: none;
+}
+
 .hidden {
   display: none;
 }

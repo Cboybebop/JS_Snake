@@ -1113,15 +1113,16 @@ function renderScoreList(element, entries, emptyMessage) {
 
   if (!entries.length) {
     const item = document.createElement("li");
+    item.className = "score-list-empty";
     item.textContent = emptyMessage;
     element.appendChild(item);
     return;
   }
 
-  entries.slice(0, 10).forEach((entry, index) => {
+  entries.slice(0, 10).forEach((entry) => {
     const item = document.createElement("li");
     const date = entry.created_at ? new Date(entry.created_at).toLocaleDateString() : "";
-    item.textContent = `${index + 1}. ${entry.name} - ${entry.score}${date ? ` (${date})` : ""}`;
+    item.textContent = `${entry.name} - ${entry.score}${date ? ` (${date})` : ""}`;
     element.appendChild(item);
   });
 }
