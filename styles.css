@@ -17,28 +17,40 @@
   box-sizing: border-box;
 }
 
-html,
-body {
+html {
   min-height: 100%;
+  background-color: var(--bg-1);
+  overscroll-behavior: none;
 }
 
-html {
+body {
+  margin: 0;
+  min-height: 100vh;
+  min-height: 100dvh;
+  position: relative;
+  isolation: isolate;
+  font-family: "Space Grotesk", "Segoe UI", sans-serif;
+  color: var(--text-main);
+  background-color: var(--bg-1);
+  overscroll-behavior: none;
+  overflow-x: hidden;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
   background:
     radial-gradient(circle at 10% 15%, rgba(48, 213, 200, 0.14), transparent 28%),
     radial-gradient(circle at 85% 10%, rgba(255, 143, 90, 0.2), transparent 32%),
     linear-gradient(140deg, var(--bg-1), var(--bg-2));
 }
 
-body {
-  margin: 0;
-  min-height: 100vh;
-  font-family: "Space Grotesk", "Segoe UI", sans-serif;
-  color: var(--text-main);
-  background: transparent;
-}
-
 .app-shell {
   min-height: 100vh;
+  min-height: 100dvh;
   padding: 18px;
   max-width: 1800px;
   margin: 0 auto;
